@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>JS Drum Kit</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
@@ -57,27 +59,35 @@
   <audio data-key="75" src="sounds/tom.wav"></audio>
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<script>
-  function removeTransition(e) {
-    if (e.propertyName !== 'transform') return;
-    e.target.classList.remove('playing');
-  }
+  <script>
+   
+    function playSound(e) {
+      var audio = document.querySelector(`audio[data-key="${e.keyCode}"]`); //select audio by data-key
+      var key = document.querySelector(`.key[data-key="${e.keyCode}"]`); //select the .key class by data-key
+      if (!audio) {
+        return //if non functioning key is pressed then return to do nothing
+      }
+      audio.currentTime = 0; //when audio is played do not wait for duration to play again
+      audio.play();
+      key.classList.add('playing'); //add class of .playing to .key
+    }
 
-  function playSound(e) {
-    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
-    const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
-    if (!audio) return;
+    //function to remove the transitionend
+    function removeTransition(e) {
+      if (e.propertyName !== 'transform') return; //skip it if it's not a transform 
+      e.target.classList.remove('playing');
+    }
 
-    key.classList.add('playing');
-    audio.currentTime = 0;
-    audio.play();
-  }
+    //trasition end event for css effects
+    var keys = document.querySelectorAll('.key'); //selects all matching keys
+    keys.forEach(key => key.addEventListener('transitionend', removeTransition)); //adds transition end then remove it.
 
-  const keys = Array.from(document.querySelectorAll('.key'));
-  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
-  window.addEventListener('keydown', playSound);
-</script>
+     //event listener on keydown with function to fire audio on keycode event
+     window.addEventListener('keydown', playSound);
+
+  </script>
 
 
 </body>
+
 </html>
